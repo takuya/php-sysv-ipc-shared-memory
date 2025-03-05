@@ -2,6 +2,7 @@
 
 namespace Tests\Units\SysV;
 
+use Exception;
 use Tests\TestCase;
 use Takuya\SysV\IPCSharedMem;
 use function Takuya\Helpers\str_rand;
@@ -12,26 +13,25 @@ class ShareWithInterProcessTest extends TestCase {
     $key = rand(1, 100);
     $name = str_rand(10);
     $msg = str_rand(10);
-    if (($pid = pcntl_fork())===false){
-      throw new \Exception('fork failed');
+    if( ( $pid = pcntl_fork() ) === false ) {
+      throw new Exception('fork failed');
     }
-    if ( $pid===0 ){
+    if( $pid === 0 ) {
       $shm = new IPCSharedMem($name);
       $shm->put($msg);
       $shm->detach();
       exit(0);
-  
     }
     $shm = new IPCSharedMem($name);
-    while($shm->isEmpty()){
+    while($shm->isEmpty()) {
       usleep(100);
     }
     $ret = $shm->get();
     $shm->erase();
-    $empty  = $shm->isEmpty();
-    pcntl_waitpid($pid,$st);
+    $empty = $shm->isEmpty();
+    pcntl_waitpid($pid, $st);
     $shm->destroy();
-    $this->assertEquals($msg,$ret);
+    $this->assertEquals($msg, $ret);
     $this->assertTrue($empty);
   }
 }
