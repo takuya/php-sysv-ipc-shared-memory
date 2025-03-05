@@ -31,10 +31,11 @@
     }
   ],
   "require": {
+    "php": ">=8.0",
     "ext-sysvshm": "*"
   },
   "require-dev": {
-    "phpunit/phpunit": "^12.0",
+    "phpunit/phpunit": "^10",
     "ext-pcntl": "*"
   }
 }
