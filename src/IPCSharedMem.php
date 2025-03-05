@@ -26,10 +26,8 @@ class IPCSharedMem {
    * @param int    $perm IPC permission default is 0770
    */
   
-  public function __construct( public string $name, public int $size = 1024*2, int $perm = 0770 ) {
-    if( ! ( $this->shm = shm_attach($this->key(), $size, $perm) ) ) {
-      throw new \RuntimeException('shm_attach failed.');
-    }
+  public function __construct( public string $name, public int $size = 1024*2, public int $perm = 0770 ) {
+    $this->attach();
   }
   
   public function isEmpty():bool {
@@ -69,5 +67,26 @@ class IPCSharedMem {
   
   public function destroy():bool {
     return shm_remove($this->shm);
+  }
+  
+  /**
+   * @return bool
+   */
+  public function detach():bool{
+    $ret= shm_detach($this->shm);
+    unset($this->shm);
+    return $ret;
+  }
+  
+  /**
+   * @return bool
+   */
+  public function attach():bool{
+    $ret = shm_attach($this->key(),$this->size,$this->perm);
+    if(!$ret){
+      throw new \RuntimeException('shm_attach() failed.');
+    }
+    $this->shm = $ret;
+    return true;
   }
 }
