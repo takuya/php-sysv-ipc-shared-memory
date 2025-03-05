@@ -14,6 +14,20 @@ vcs https://github.com/takuya/$name
 composer require takuya/$name:master
 composer install
 ```
+## Examples
+
+```php
+<?php
+$uniq_name = 'shm_name';
+$shm = new IPCSharedMem($uniq_name);
+$shm->put(new MyClass());
+//
+$obj = $shm->get();// instance of MyClass;
+// remove ipc
+$shm->destroy()
+```
+
+
 ### comparison to shm_open
 
 Compare to shared memory function (`shm_open`) , one big advantage in SysV.
