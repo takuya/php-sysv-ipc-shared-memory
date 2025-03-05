@@ -52,4 +52,28 @@ class SharedMemoryTest extends TestCase {
     $shm->destroy();
     $this->assertEquals([true, null], $ret);
   }
+  
+  public function test_sysv_shared_memory_attach_destroy_multiple() {
+    $shm = new IPCSharedMem(str_rand(10));
+    $ret[] = $shm->attach();
+    $ret[] = $shm->attach();
+    $ret[] = $shm->destroy();
+    $ret[] = $shm->destroy();
+    $ret[] = $shm->destroy();
+    $this->assertEquals([true,true,true,true,true],$ret);
+  }
+  public function test_sysv_shared_memory_get_after_destroy() {
+    $shm = new IPCSharedMem(str_rand(10));
+    $ret[] = $shm->destroy();
+    $ret[] = $shm->get();
+    $this->assertEquals([true,null],$ret);
+  }
+  public function test_sysv_shared_memory_put_after_destroy() {
+    $msg = str_rand();
+    $shm = new IPCSharedMem(str_rand(10));
+    $ret[] = $shm->destroy();// shm_remove() を呼び出しても、デストラクタされない限り残るはず。
+    $ret[] = $shm->put($msg);// SysvSharedMemory reference keep IPC.
+    $ret[] = $shm->get();
+    $this->assertEquals([true,true,$msg],$ret);
+  }
 }
