@@ -44,8 +44,9 @@ jobs:
           $uniq_name = 'shm_name';
           $shm = new IPCSharedMem($uniq_name);
           $shm->put('message');
-          $shm->get('message');
-          $shm->destroy();
+          $shm->get();
+          $ret = $shm->destroy();
+          var_dump( $ret == 'message');
           EOS
           cat sample.php
           php sample.php
