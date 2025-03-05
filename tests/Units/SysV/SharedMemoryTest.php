@@ -37,4 +37,19 @@ class SharedMemoryTest extends TestCase {
     $this->assertTrue($empty);
     $this->assertEquals($obj, $ret);
   }
+  
+  public function test_sysv_shared_memory_get_from_empty() {
+    $shm = new IPCSharedMem(str_rand(10));
+    $ret = $shm->get();
+    $shm->destroy();
+    $this->assertNull($ret);
+  }
+  
+  public function test_sysv_shared_memory_put_null() {
+    $shm = new IPCSharedMem(str_rand(10));
+    $ret[] = $shm->put(null);
+    $ret[] = $shm->get();
+    $shm->destroy();
+    $this->assertEquals([true, null], $ret);
+  }
 }

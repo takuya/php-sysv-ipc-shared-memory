@@ -61,7 +61,7 @@ class IPCSharedMem {
    * @return mixed
    */
   public function get():mixed {
-    return shm_get_var($this->shm, $this->ipc_key);
+    return ! $this->isEmpty() ? shm_get_var($this->shm, $this->ipc_key) : null;
   }
   
   /**
