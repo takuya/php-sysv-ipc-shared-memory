@@ -1,0 +1,38 @@
+{
+  "name": "takuya/php-sysv-ipc-shared-memory",
+  "description": "php sysv shm wrapper",
+  "type": "library",
+  "version": "0.1",
+  "keywords": [
+    "php",
+    "sysV",
+    "IPC",
+    "SharedMemory"
+  ],
+  "autoload": {
+    "psr-4": {
+      "Takuya\\SysV\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Tests\\": "tests/"
+    },
+    "files": [
+      "tests/helper/str_rand.php",
+      "tests/helper/temp_dir.php"
+    ]
+  },
+  "authors": [
+    {
+      "name": "takuya",
+      "email": "55338+takuya@users.noreply.github.com"
+    }
+  ],
+  "require": {
+    "ext-sysvshm": "*"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^12.0"
+  }
+}
