@@ -4,7 +4,7 @@ This package is wrapper for php sysv shm_xxx.
 ## Installing 
 from Packagist 
 ```shell
-
+composer require takuya/php-sysv-ipc-shared-memory
 ```
 from GitHub
 ```shell

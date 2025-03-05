@@ -36,15 +36,16 @@ jobs:
         shell: bash
         run: |
           php -v
-          composer require takuya/php-sysv-ipc-message-queue
+          composer require takuya/php-sysv-ipc-shared-memory
           cat <<'EOS' > sample.php
           <?php
           require_once 'vendor/autoload.php';
-          use Takuya\PhpSysvMessageQueue\IPCMsgQueue;
-          $q = new IPCMsgQueue('my-named-queue');
-          $q->push('message');
-          $q->pop();
-          $q->destroy();
+          use Takuya\SysV\IPCSharedMem;
+          $uniq_name = 'shm_name';
+          $shm = new IPCSharedMem($uniq_name,64);
+          $shm->put('message');
+          $shm->get('message');
+          $shm->destroy();
           EOS
           cat sample.php
           php sample.php
