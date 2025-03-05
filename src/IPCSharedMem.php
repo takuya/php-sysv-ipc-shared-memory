@@ -7,7 +7,7 @@ use SysvSharedMemory;
 
 class IPCSharedMem {
   
-  protected int               $ipc_key;
+  protected int              $ipc_key;
   protected SysvSharedMemory $shm;
   
   /**
