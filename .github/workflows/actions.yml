@@ -42,7 +42,7 @@ jobs:
           require_once 'vendor/autoload.php';
           use Takuya\SysV\IPCSharedMem;
           $uniq_name = 'shm_name';
-          $shm = new IPCSharedMem($uniq_name,64);
+          $shm = new IPCSharedMem($uniq_name);
           $shm->put('message');
           $shm->get('message');
           $shm->destroy();
