@@ -21,7 +21,7 @@ class IPCShmKeyStore implements \ArrayAccess, \Countable, \IteratorAggregate {
   /// --- Shortcut methods
   ////////////////////////////////////////
   protected function withLock( callable $fn ) {
-    return $this->sem->withLock($fn);
+    return $this->sem->withLock(fn()=>$fn($this));
   }
   protected function load():array{
       return $this->shm->get() ?? [];
@@ -31,6 +31,14 @@ class IPCShmKeyStore implements \ArrayAccess, \Countable, \IteratorAggregate {
   }
   protected function reset():bool{
     return $this->shm->erase();
+  }
+  
+  /**
+   * @param callable(IPCShmKeyStore $this):mixed $fn
+   * @return mixed
+   */
+  public function run(callable $fn):mixed{
+    return $this->withLock($fn);
   }
   
   public function destroy():bool {
