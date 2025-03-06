@@ -57,7 +57,7 @@ class IPCSharedMem {
   }
   
   /**
-   * return $var that is **unserialized** automatically.
+   * return $var that is **un-serialized** automatically.
    * @return mixed
    */
   public function get():mixed {

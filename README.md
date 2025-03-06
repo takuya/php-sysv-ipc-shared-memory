@@ -27,10 +27,37 @@ $obj = $shm->get();// instance of MyClass;
 $shm->destroy()
 ```
 
+## More easy usage : Array Access.
+
+This package offers KVS style access to Shared Memory.
+```php
+<?php
+$store = new IPCShmKeyStore('kvs-like', 1024*1024);
+// Set by key
+$store->set('key',['msg'=>'Auxakai3']);
+// Get by key
+$store->get('key')['msg']; // => Auxakai3 
+```
+
+This package offers ArrayAccess style to use Shared Memory.
+```php
+<?php
+$arr = new IPCShmKeyStore('array-like', 100);
+$arr[] = 'a';
+$arr[] = 'b';
+$arr[] = 'c';
+foreach($arr as $e){
+  echo "$e,";
+}
+// => "a,b,c,"
+```
+
+Limitation: ArrayAccess is not a real 'array'. Array functions ( ex `array_map()` ) cannot be applied for this.
+
 
 ### comparison to shm_open
 
-Compare to shared memory function (`shm_open`) , one big advantage in SysV.
+Compare to shared memory functions ( ex `shm_open()`) , One big advantage SysV functions has.
 
 Sysv function (ex `shm_put_var`) has auto serialization.
 
