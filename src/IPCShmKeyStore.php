@@ -17,6 +17,9 @@ class IPCShmKeyStore implements \ArrayAccess, \Countable, \IteratorAggregate {
     $this->sem = new IPCSemaphore($this->name.'_sem', $this->perm);
   }
   
+  ////////////////////////////////////////
+  /// --- Shortcut methods
+  ////////////////////////////////////////
   protected function withLock( callable $fn ) {
     return $this->sem->withLock($fn);
   }
@@ -25,6 +28,9 @@ class IPCShmKeyStore implements \ArrayAccess, \Countable, \IteratorAggregate {
   }
   protected function save(array $items):bool{
     return $this->shm->put($items);
+  }
+  protected function reset():bool{
+    return $this->shm->erase();
   }
   
   public function destroy():bool {
@@ -49,7 +55,7 @@ class IPCShmKeyStore implements \ArrayAccess, \Countable, \IteratorAggregate {
   }
   
   public function clear():bool {
-    return $this->withLock(fn() => $this->shm->erase());
+    return $this->withLock(fn() => $this->reset());
   }
   
   public function store( array $items ):bool {
