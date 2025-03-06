@@ -23,6 +23,9 @@ class IPCShmKeyStore implements \ArrayAccess, \Countable, \IteratorAggregate {
   protected function load():array{
       return $this->shm->get() ?? [];
   }
+  protected function save(array $items):bool{
+    return $this->shm->put($items);
+  }
   
   public function destroy():bool {
     return $this->sem->acquire()
@@ -50,7 +53,7 @@ class IPCShmKeyStore implements \ArrayAccess, \Countable, \IteratorAggregate {
   }
   
   public function store( array $items ):bool {
-    return $this->withLock(fn() => $this->shm->put($items));
+    return $this->withLock(fn() => $this->save($items));
   }
   
   public function del( string|int $key ):bool {
@@ -58,7 +61,7 @@ class IPCShmKeyStore implements \ArrayAccess, \Countable, \IteratorAggregate {
       $items = $this->load();
       unset($items[$key]);
       
-      return $this->shm->put($items);
+      return $this->save($items);
     });
   }
   
@@ -67,7 +70,7 @@ class IPCShmKeyStore implements \ArrayAccess, \Countable, \IteratorAggregate {
       $items = $this->load();
       is_null($key) ? $items[] = $val : $items[$key] = $val;
       
-      return $this->shm->put($items);
+      return $this->save($items);
     });
   }
   
