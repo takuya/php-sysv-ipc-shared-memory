@@ -57,7 +57,7 @@ Limitation: ArrayAccess is not a real 'array'. Array functions ( ex `array_map()
 
 ### comparison to shm_open
 
-Compare to shared memory functions ( ex `shm_open()`) , One big advantage SysV functions has.
+Compare to shared memory functions ( ex `shmop_open()`) , One big advantage SysV functions has.
 
 Sysv function (ex `shm_put_var`) has auto serialization.
 
