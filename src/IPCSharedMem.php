@@ -18,9 +18,11 @@ class IPCSharedMem {
   public function __construct( public string $name, public int $size = 1024*2, public int $perm = 0770 ) {
     $this->attach();
   }
-  public static function str_to_key(string $str):int{
-    return crc32($str)&0x7FFFFFFF;
+  
+  public static function str_to_key( string $str ):int {
+    return IPCSemaphore::str_to_key($str);
   }
+  
   /**
    * @return bool
    */
@@ -35,36 +37,43 @@ class IPCSharedMem {
   }
   
   protected function key():int {
-    return $this->ipc_key??=static::str_to_key($this->name);
+    return $this->ipc_key ??= static::str_to_key($this->name);
   }
   
   /**
    * This fill ZERO to memory and clearing existing data. not shared memory itself.
+   * @param int|null $key default $this->ipc_key.
    * @return bool
    */
-  public function erase():bool {
-    return ! $this->isEmpty() && shm_remove_var($this->shm, $this->ipc_key);
+  public function erase( int $key = null ):bool {
+    return ! $this->isEmpty() && shm_remove_var($this->shm, $key ?? $this->ipc_key);
   }
   
-  public function isEmpty():bool {
-    return ! shm_has_var($this->shm, $this->ipc_key);
+  /**
+   * @param int|null $key default $this->ipc_key.
+   * @return bool
+   */
+  public function isEmpty( int $key = null ):bool {
+    return ! shm_has_var($this->shm, $key ?? $this->ipc_key);
   }
   
   /**
    * return $var that is **un-serialized** automatically.
+   * @param int|null $key default $this->ipc_key.
    * @return mixed
    */
-  public function get():mixed {
-    return ! $this->isEmpty() ? shm_get_var($this->shm, $this->ipc_key) : null;
+  public function get( int $key = null ):mixed {
+    return ! $this->isEmpty() ? shm_get_var($this->shm, $key ?? $this->ipc_key) : null;
   }
   
   /**
    * $var will be serialized automatically.
-   * @param $var
+   * @param          $var
+   * @param int|null $key default $this->ipc_key.
    * @return bool
    */
-  public function put( $var ):bool {
-    return shm_put_var($this->shm, $this->ipc_key, $var);
+  public function put( $var, int $key = null ):bool {
+    return shm_put_var($this->shm, $key ?? $this->ipc_key, $var);
   }
   
   /**
