@@ -29,7 +29,7 @@ $shm->destroy()
 
 ## Safer Access 
 
-call get() then set() in the lock.
+call `get() then set()` in the lock to update value using semaphore.
 
 ```php
 <?php
