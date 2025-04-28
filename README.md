@@ -27,16 +27,16 @@ $obj = $shm->get();// instance of MyClass;
 $shm->destroy()
 ```
 
-## Safer Access 
+## Safer Access for update.
 
 call `get() then set()` in the lock to update value using semaphore.
 
 ```php
 <?php
 $idx = 'key';
-$shm = new IPCSharedMem('shm_name');
-$shm->runWithLock(function($shm)use($idx){
-  $shm->set($idx,$shm->get($idx)+1);
+$store = new IPCShmKeyStore('shm_name');
+$store->runWithLock(function($store)use($idx){
+  $store->set($store,$shm->get($idx)+1);
 });
 ```
 
