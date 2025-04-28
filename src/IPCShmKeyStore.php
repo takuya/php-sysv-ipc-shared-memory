@@ -13,8 +13,8 @@ class IPCShmKeyStore implements \ArrayAccess, \Countable, \IteratorAggregate {
    * @param int    $perm IPC permission default is 0770
    */
   public function __construct( public string $name, public int $size = 1024*10, public int $perm = 0770 ) {
-    $this->shm = new IPCSharedMem($this->name, $this->size, $this->perm);
-    $this->sem = new IPCSemaphore($this->name.'_sem', $this->perm);
+    $this->shm = new IPCSharedMem(name:$this->name, size:$this->size, perm:$this->perm);
+    $this->sem = new IPCSemaphore(name:$this->name.'_sem',perm:$this->perm);
   }
   
   ////////////////////////////////////////
@@ -42,9 +42,7 @@ class IPCShmKeyStore implements \ArrayAccess, \Countable, \IteratorAggregate {
   }
   
   public function destroy():bool {
-    return $this->sem->acquire()
-           && $this->shm->destroy()
-           && $this->sem->destroy();
+    return $this->withLock(fn()=>$this->shm->destroy()) && $this->sem->destroy();
   }
   
   public function size():int {
