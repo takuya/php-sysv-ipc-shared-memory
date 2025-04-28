@@ -37,7 +37,7 @@ class IPCShmKeyStore implements \ArrayAccess, \Countable, \IteratorAggregate {
    * @param callable(IPCShmKeyStore $this):mixed $fn
    * @return mixed
    */
-  public function run(callable $fn):mixed{
+  public function runWithLock( callable $fn):mixed{
     return $this->withLock($fn);
   }
   

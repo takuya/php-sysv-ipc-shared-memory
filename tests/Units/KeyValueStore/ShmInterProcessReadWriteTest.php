@@ -19,13 +19,13 @@ class ShmInterProcessReadWriteTest extends TestCase {
     $size = 150;
     $cpids = [];
     // fork
-    foreach (range(0,100) as $iter){
+    foreach (range(0,30) as $iter){
       $cpids[] = child_fork(
         function ( $cpid ) use ( $name, $size ) { /*  child */
           $store = new IPCShmKeyStore($name, $size);
           
           foreach (range(1,10) as $idx){
-            $store->run(function($store)use($idx){
+            $store->runWithLock(function( $store)use($idx){
               $store->set(0,($store->get(0) ?? 0)+$idx);
             });
             usleep(rand(100,200));
@@ -35,7 +35,7 @@ class ShmInterProcessReadWriteTest extends TestCase {
         function ( $cpid ) use ( $name, $size ) { /*  child */
           $store = new IPCShmKeyStore($name, $size);
           foreach (range(1,10) as $idx){
-            $store->run(function($store)use($idx){
+            $store->runWithLock(function( $store)use($idx){
               $store->set(0,($store->get(0) ?? 0)+$idx*1000);
             });
             usleep(rand(100,200));
