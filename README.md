@@ -27,6 +27,20 @@ $obj = $shm->get();// instance of MyClass;
 $shm->destroy()
 ```
 
+## Safer Access 
+
+call get() then set() in the lock.
+
+```php
+<?php
+$idx = 'key';
+$shm = new IPCSharedMem('shm_name');
+$shm->runWithLock(function($shm)use($idx){
+  $shm->set($idx,$shm->get($idx)+1);
+});
+```
+
+
 ## More easy usage : Array Access.
 
 This package offers KVS style access to Shared Memory.
