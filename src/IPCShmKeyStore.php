@@ -13,23 +13,33 @@ class IPCShmKeyStore implements \ArrayAccess, \Countable, \IteratorAggregate {
    * @param int    $perm IPC permission default is 0770
    */
   public function __construct( public string $name, public int $size = 1024*10, public int $perm = 0770 ) {
-    $this->shm = new IPCSharedMem(name:$this->name, size:$this->size, perm:$this->perm);
-    $this->sem = new IPCSemaphore(name:$this->name.'_sem',perm:$this->perm);
+    ['shm-key' => $shm_key, 'sem-key' => $sem_key] = $this->ipc_key();
+    $this->shm = new IPCSharedMem(name: $shm_key, size: $this->size, perm: $this->perm);
+    $this->sem = new IPCSemaphore(name: $sem_key, perm: $this->perm);
   }
   
+  public function ipc_key():array {
+    return [
+      'sem-key' => IPCSharedMem::str_to_key($this->name.'_sem'),
+      'shm-key' => IPCSharedMem::str_to_key($this->name),
+    ];
+  }
   ////////////////////////////////////////
   /// --- Shortcut methods
   ////////////////////////////////////////
   protected function withLock( callable $fn ) {
-    return $this->sem->withLock(fn()=>$fn($this));
+    return $this->sem->withLock(fn() => $fn($this));
   }
-  protected function load():array{
-      return $this->shm->get() ?? [];
+  
+  protected function load():array {
+    return $this->shm->get() ?? [];
   }
-  protected function save(array $items):bool{
+  
+  protected function save( array $items ):bool {
     return $this->shm->put($items);
   }
-  protected function reset():bool{
+  
+  protected function reset():bool {
     return $this->shm->erase();
   }
   
@@ -37,12 +47,12 @@ class IPCShmKeyStore implements \ArrayAccess, \Countable, \IteratorAggregate {
    * @param callable(IPCShmKeyStore $this):mixed $fn
    * @return mixed
    */
-  public function runWithLock( callable $fn):mixed{
+  public function runWithLock( callable $fn ):mixed {
     return $this->withLock($fn);
   }
   
   public function destroy():bool {
-    return $this->withLock(fn()=>$this->shm->destroy()) && $this->sem->destroy();
+    return $this->withLock(fn() => $this->shm->destroy()) && $this->sem->destroy();
   }
   
   public function size():int {
